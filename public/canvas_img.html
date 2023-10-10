@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캔버스 데이터베이스 노드</title>
+</head>
+<body>
+    <div>
+        <canvas id="my_canvas" width="500" height="500"></canvas>
+    </div>
+</body>
+    <script>
+        const my_canvas = document.querySelector('#my_canvas');
+        const ctx = my_canvas.getContext('2d');
+
+        // ctx.fillStyle = 'blue';
+        // ctx.fillRect(10,10,490,490);
+        
+        const reponse = fetch('/canvas_img', {
+            method: 'post',
+            headers:{
+                'content-type':'application/json'
+            }
+        }).then((res)=>res.json())
+        .then(async(res)=>{
+            const binary = new Uint8Array(res['result'][0]['img']['data'])
+            const blob = new Blob([binary], {type:'image/jpeg'})
+            const kimg = new Image()
+            kimg.src = URL.createObjectURL(blob);
+            const imgLoadingDone = await kimg.decode();
+
+            ctx.drawImage(kimg, 100, 100, 400, 800)
+        })
+        
+
+
+    </script>
+
+</html>
